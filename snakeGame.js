@@ -1,56 +1,65 @@
 function startGame() {
 	canv = document.getElementById("gc");
 	ctx = canv.getContext("2d");
-	document.addEventListener("keydown", keyPush);
 
 	background = new Image("black", 0, 0, canv.width, canv.height);
-	headPosX = headPosY = 10;
-	tileCount = canv.width / 20;
-	scaleFactor = canv.width / tileCount;
-	snakeVelocityX = snakeVelocityY = 0;
-	appleX = appleY = 15;
+	var headPosition = {
+		x: 10,
+		y: 10
+	};
+	var numTiles = canv.width / 20;
+	scaleFactor = canv.width / numTiles;
+	var snakeSpeed = {
+		x: 0,
+		y: 0
+	};
+	var apple = {
+		x: 15,
+		y: 15
+	};
 	trail = [];
 	tail = 5;
 	on = true;
 
-	setInterval(game, 1000/15);
+	document.addEventListener("keydown", function(evt) {keyPush(evt, snakeSpeed)});
+	setInterval(function() {game(numTiles, snakeSpeed, headPosition, apple)}, 1000/15);
 }
 
-function calculatePositions() {
-	headPosX += snakeVelocityX;
-	headPosY += snakeVelocityY;
-	if (headPosX < 0) headPosX = tileCount - 1; 
-	if (headPosX > (tileCount - 1)) headPosX = 0; 
-	if (headPosY < 0) headPosY = tileCount - 1; 
-	if (headPosY > (tileCount - 1)) headPosY = 0; 
+function calculatePositions(speed, position, numTiles) {
+	position.x += speed.x;
+	position.y += speed.y;
+	if (position.x < 0) position.x = numTiles - 1; 
+	if (position.x > (numTiles - 1)) position.x = 0; 
+	if (position.y < 0) position.y = numTiles - 1; 
+	if (position.y > (numTiles - 1)) position.y = 0; 
 }
 	
-function game() {
+function game(numTiles, speed, position, apple) {
 	if (on) {
-		calculatePositions();
-		var apple = new Image("red", getPos(appleX), getPos(appleY), (scaleFactor - 4), (scaleFactor - 4));
+		calculatePositions(speed, position, numTiles);
+		var myApple = new Image("red", getPos(apple.x), getPos(apple.y), (scaleFactor - 4), (scaleFactor - 4));
 		drawImage(background);
-		drawSnake();
-		adjustForAppleCapture();
-		drawImage(apple);
+		drawSnake(position);
+		adjustForAppleCapture(apple, position, numTiles);
+		drawImage(myApple);
 	}
 }
 
-function adjustForAppleCapture() {
-	if (appleX === headPosX && appleY === headPosY) {
+function adjustForAppleCapture(apple, headPosition, numTiles) {
+	if (apple.x === headPosition.x && apple.y === headPosition.y) {
 		tail++;
-		appleX = Math.floor(Math.random() * tileCount);
-		appleY = Math.floor(Math.random() * tileCount);
+		apple.x = Math.floor(Math.random() * numTiles);
+		apple.y = Math.floor(Math.random() * numTiles);
 	}
 }
 
-function drawSnake() {
+function drawSnake(position) {
 	trail.forEach(function(box) {
 		var boxImage = new Image("lime", getPos(box.x), getPos(box.y), (scaleFactor - 4), (scaleFactor - 4));
 		drawImage(boxImage);
-		if (box.x === headPosX && box.y === headPosY) tail = 5; 
+		if (box.x === position.x && box.y === position.y) tail = 5; 
 	});
-	trail.push({x:headPosX, y:headPosY});
+	trail.push({x:position.x, y:position.y});
 	while (trail.length > tail) trail.shift(); 
 }
 
@@ -73,34 +82,39 @@ function Image(colour, posX, posY, height, width) {
 	};
 }
 
-function keyPush(evt) {
+function keyPush(evt, snakeSpeed) {
 	switch (evt.keyCode) {
 		case 37:
-			if (snakeVelocityX !== 1) {
-				snakeVelocityX = -1; 
-				snakeVelocityY = 0;
+			if (snakeSpeed.x !== 1) {
+				snakeSpeed.x = -1; 
+				snakeSpeed.y = 0;
 			}
 			break;
 		case 38:
-			if (snakeVelocityY !== 1) {
-				snakeVelocityX = 0; 
-				snakeVelocityY = -1;
+			if (snakeSpeed.y !== 1) {
+				snakeSpeed.x = 0; 
+				snakeSpeed.y = -1;
 			}
 			break;
 		case 39:
-			if (snakeVelocityX !== -1) {
-				snakeVelocityX = 1; 
-				snakeVelocityY = 0;
+			if (snakeSpeed.x !== -1) {
+				snakeSpeed.x = 1; 
+				snakeSpeed.y = 0;
 			}
 			break;
 		case 40:
-			if (snakeVelocityY !== -1) {
-				snakeVelocityX = 0; 
-				snakeVelocityY = 1;
+			if (snakeSpeed.y !== -1) {
+				snakeSpeed.x = 0; 
+				snakeSpeed.y = 1;
 			}
 			break;
 		case 27:
 			on = !on;
 			break;
 	}
+
+	return {
+		speedX: snakeSpeed.x,
+		speedY: snakeSpeed.y
+	};
 }
