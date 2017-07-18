@@ -1,11 +1,17 @@
 <div id="entireView">
+	<canvas id="sb" width="420" height="20"></canvas>
 	<canvas id="gc" width="420" height="420"></canvas>
-	<h1>Next plans -> paranoid, racing, pacman</h1>
-	<h2>Thereafter -> chess, database, prince of persia</h2>
-	<h3>Finally -> Machine Learning</h3>
+	<p>First -> Tic-Tac-Toe (Multiplayer Using Server/Database)</p>
+	<p>Next plans -> paranoid, racing, pacman</p>
+	<p>Thereafter -> chess, database, prince of persia</p>
+	<p>Finally -> Machine Learning</p>
 </div>
 
 <script src="snakeGame.js"></script>
 <script>
-window.onload = startGame();
+function getElem(id) {
+	return document.getElementById(id);
+}
+
+window.onload = startGame(getElem("gc"), getElem("sb"));
 </script>
