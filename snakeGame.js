@@ -1,4 +1,4 @@
-window.onload = function() {
+function startGame() {
 	canv = document.getElementById("gc");
 	ctx = canv.getContext("2d");
 	document.addEventListener("keydown", keyPush);
@@ -15,7 +15,6 @@ window.onload = function() {
 
 	setInterval(game, 1000/15);
 }
-
 
 function calculatePositions() {
 	headPosX += snakeVelocityX;
@@ -77,16 +76,28 @@ function Image(colour, posX, posY, height, width) {
 function keyPush(evt) {
 	switch (evt.keyCode) {
 		case 37:
-			snakeVelocityX = -1; snakeVelocityY = 0;
+			if (snakeVelocityX !== 1) {
+				snakeVelocityX = -1; 
+				snakeVelocityY = 0;
+			}
 			break;
 		case 38:
-			snakeVelocityX = 0; snakeVelocityY = -1;
+			if (snakeVelocityY !== 1) {
+				snakeVelocityX = 0; 
+				snakeVelocityY = -1;
+			}
 			break;
 		case 39:
-			snakeVelocityX = 1; snakeVelocityY = 0;
+			if (snakeVelocityX !== -1) {
+				snakeVelocityX = 1; 
+				snakeVelocityY = 0;
+			}
 			break;
 		case 40:
-			snakeVelocityX = 0; snakeVelocityY = 1;
+			if (snakeVelocityY !== -1) {
+				snakeVelocityX = 0; 
+				snakeVelocityY = 1;
+			}
 			break;
 		case 27:
 			on = !on;
