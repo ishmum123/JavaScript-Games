@@ -54,6 +54,9 @@ function game() {
 	ctx.fillRect(ax * gs, ay * gs, gs - 2, gs - 2);
 }
 
+prevXV = 0;
+prevYV = 0;
+
 function keyPush(evt) {
 	switch (evt.keyCode) {
 		case 37:
@@ -67,6 +70,11 @@ function keyPush(evt) {
 			break;
 		case 40:
 			xv = 0; yv = 1;
+			break;
+		case 27:
+			prevXV = xv;
+			prevYV = yv;
+			xv = 0; yv = 0;
 			break;
 	}
 }
