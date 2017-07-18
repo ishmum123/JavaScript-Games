@@ -4,8 +4,9 @@ window.onload = function() {
 	document.addEventListener("keydown", keyPush);
 
 	background = new Image("black", 0, 0, canv.width, canv.height);
-	posX = posY = 10;
-	scaleFactor = tc = 20;
+	headPosX = headPosY = 10;
+	tileCount = canv.width / 20;
+	scaleFactor = canv.width / tileCount;
 	snakeVelocityX = snakeVelocityY = 0;
 	appleX = appleY = 15;
 	trail = [];
@@ -17,18 +18,18 @@ window.onload = function() {
 
 
 function calculatePositions() {
-	posX += snakeVelocityX;
-	posY += snakeVelocityY;
-	if (posX < 0) posX = tc - 1; 
-	if (posX > (tc - 1)) posX = 0; 
-	if (posY < 0) posY = tc - 1; 
-	if (posY > (tc - 1)) posY = 0; 
+	headPosX += snakeVelocityX;
+	headPosY += snakeVelocityY;
+	if (headPosX < 0) headPosX = tileCount - 1; 
+	if (headPosX > (tileCount - 1)) headPosX = 0; 
+	if (headPosY < 0) headPosY = tileCount - 1; 
+	if (headPosY > (tileCount - 1)) headPosY = 0; 
 }
 	
 function game() {
 	if (on) {
 		calculatePositions();
-		var apple = new Image("red", (appleX * scaleFactor), (appleY * scaleFactor), (scaleFactor - 4), (scaleFactor - 4));
+		var apple = new Image("red", getPos(appleX), getPos(appleY), (scaleFactor - 4), (scaleFactor - 4));
 		drawImage(background);
 		drawSnake();
 		adjustForAppleCapture();
@@ -37,21 +38,25 @@ function game() {
 }
 
 function adjustForAppleCapture() {
-	if (appleX === posX && appleY === posY) {
+	if (appleX === headPosX && appleY === headPosY) {
 		tail++;
-		appleX = Math.floor(Math.random() * tc);
-		appleY = Math.floor(Math.random() * tc);
+		appleX = Math.floor(Math.random() * tileCount);
+		appleY = Math.floor(Math.random() * tileCount);
 	}
 }
 
 function drawSnake() {
 	trail.forEach(function(box) {
-		var boxImage = new Image("lime", (box.x * scaleFactor), (box.y * scaleFactor), (scaleFactor - 4), (scaleFactor - 4));
+		var boxImage = new Image("lime", getPos(box.x), getPos(box.y), (scaleFactor - 4), (scaleFactor - 4));
 		drawImage(boxImage);
-		if (box.x === posX && box.y === posY) tail = 5; 
+		if (box.x === headPosX && box.y === headPosY) tail = 5; 
 	});
-	trail.push({x:posX, y:posY});
+	trail.push({x:headPosX, y:headPosY});
 	while (trail.length > tail) trail.shift(); 
+}
+
+function getPos(value) {
+	return value * scaleFactor;
 }
 
 function drawImage(Image) {
